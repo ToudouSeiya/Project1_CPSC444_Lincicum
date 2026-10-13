@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Three.js Project 1</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+    }
+}
+</script>
+<script type="module" src="./materialMuseum.js"></script>
+<div id="instructions">
+    <h3>Project 1</h3>
+
+    <p>
+        Explore the scene using the mouse.<br>
+        Orbit = Left Mouse<br>
+        Pan = Right Mouse<br>
+        Zoom = Scroll Wheel
+    </p>
+  
+</div>
+
+</html>
