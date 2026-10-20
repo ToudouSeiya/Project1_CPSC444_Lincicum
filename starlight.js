@@ -112,6 +112,8 @@ const capsuleGeometry = new THREE.CapsuleGeometry(1, 1, 4, 8, 1);
 // Character
 // ---------------------------------------------------
 
+const charArray = [];
+
 const charMaterial = 
     new THREE.MeshStandardMaterial({
         color: 0xffff00,
@@ -125,7 +127,7 @@ const charMaterial2 =
         roughness: 1,
         metalness: 0
     });
-
+{
 //body
 const char = 
     new THREE.Mesh(
@@ -138,6 +140,7 @@ char.position.y=2;
 char.rotation.z=Math.PI / 2;
 
 scene.add(char);
+charArray.push(char);
 
 //eyes 
 const eyeMaterial = new THREE.MeshStandardMaterial( { color: 0xffffff, roughness:0 } );
@@ -146,12 +149,14 @@ eye1.scale.set(0.25, 0.25, 0.25);
 eye1.position.set(-0.5, 2, 0.5);
 eye1.receiveShadow = true;
 scene.add(eye1);
+charArray.push(eye1);
 
 const eye2 = new THREE.Mesh( sphereGeometry, eyeMaterial );
 eye2.scale.set(0.25, 0.25, 0.25);
 eye2.position.set(0.5, 2, 0.5);
 eye2.receiveShadow = true;
 scene.add(eye2);
+charArray.push(eye2);
 
 const pupilMaterial = new THREE.MeshStandardMaterial( { color: 0x000000, roughness:0 } );
 const pupil1 = new THREE.Mesh( sphereGeometry, pupilMaterial );
@@ -159,12 +164,14 @@ pupil1.scale.set(0.125, 0.125, 0.125);
 pupil1.position.set(-0.5, 2, 0.675);
 pupil1.receiveShadow = true;
 scene.add( pupil1 );
+charArray.push(pupil1);
 
 const pupil2 = new THREE.Mesh( sphereGeometry, pupilMaterial );
 pupil2.scale.set(0.125, 0.125, 0.125);
 pupil2.position.set(0.5, 2, 0.675);
 pupil2.receiveShadow = true;
 scene.add( pupil2 );
+charArray.push(pupil2);
 
 //mouth
 const mouth = new THREE.Mesh(capsuleGeometry, pupilMaterial);
@@ -173,6 +180,7 @@ mouth.rotation.z = Math.PI / 2;
 mouth.position.set(0, 1.75, 0.5);
 mouth.receiveShadow = true;
 scene.add(mouth);
+charArray.push(mouth);
 
 //antenna 
 const antenna1 = new THREE.Mesh(cylinderGeometry, charMaterial);
@@ -180,24 +188,28 @@ antenna1.scale.set(0.05, 0.5, 0.05);
 antenna1.position.set(0.3, 2.7, 0);
 antenna1.receiveShadow = true;
 scene.add(antenna1);
+charArray.push(antenna1);
 
 const antennaPip1 = new THREE.Mesh(sphereGeometry, charMaterial2);
 antennaPip1.scale.set(0.075, 0.075, 0.075);
 antennaPip1.position.set(0.3, 2.95, 0);
 antennaPip1.receiveShadow = true;
 scene.add(antennaPip1);
+charArray.push(antennaPip1);
 
 const antenna2 = new THREE.Mesh(cylinderGeometry, charMaterial);
 antenna2.scale.set(0.05, 0.5, 0.05);
 antenna2.position.set(-0.3, 2.7, 0);
 antenna2.receiveShadow = true;
 scene.add(antenna2);
+charArray.push(antenna2);
 
 const antennaPip2 = new THREE.Mesh(sphereGeometry, charMaterial2);
 antennaPip2.scale.set(0.075, 0.075, 0.075);
 antennaPip2.position.set(-0.3, 2.95, 0);
 antennaPip2.receiveShadow = true;
 scene.add(antennaPip2);
+charArray.push(antennaPip2);
 
 //legs
 const upperLeg1 = new THREE.Mesh(cylinderGeometry, charMaterial);
@@ -205,18 +217,21 @@ upperLeg1.scale.set(0.1, 0.7, 0.1);
 upperLeg1.position.set(0.5, 1.25, 0);
 upperLeg1.receiveShadow = true;
 scene.add(upperLeg1);
+charArray.push(upperLeg1);
 
 const knee1 = new THREE.Mesh(sphereGeometry, charMaterial2);
 knee1.scale.set(0.15, 0.15, 0.15);
 knee1.position.set(0.5, 0.85, 0);
 knee1.receiveShadow = true;
 scene.add(knee1);
+charArray.push(knee1);
 
 const lowerLeg1 = new THREE.Mesh(cylinderGeometry, charMaterial);
 lowerLeg1.scale.set(0.1, 0.7, 0.1);
 lowerLeg1.position.set(0.5, 0.5, 0);
 lowerLeg1.receiveShadow = true;
 scene.add(lowerLeg1);
+charArray.push(lowerLeg1);
 
 const foot1 = new THREE.Mesh(capsuleGeometry, charMaterial2);
 foot1.scale.set(0.15, 0.15, 0.15);
@@ -224,6 +239,7 @@ foot1.rotation.x = Math.PI / 2;
 foot1.position.set(0.5, 0.075, 0.1);
 foot1.receiveShadow = true;
 scene.add(foot1);
+charArray.push(foot1);
 
 
 const upperLeg2 = new THREE.Mesh(cylinderGeometry, charMaterial);
@@ -231,18 +247,21 @@ upperLeg2.scale.set(0.1, 0.7, 0.1);
 upperLeg2.position.set(-0.5, 1.25, 0);
 upperLeg2.receiveShadow = true;
 scene.add(upperLeg2);
+charArray.push(upperLeg2);
 
 const knee2 = new THREE.Mesh(sphereGeometry, charMaterial2);
 knee2.scale.set(0.15, 0.15, 0.15);
 knee2.position.set(-0.5, 0.85, 0);
 knee2.receiveShadow = true;
 scene.add(knee2);
+charArray.push(knee2);
 
 const lowerLeg2 = new THREE.Mesh(cylinderGeometry, charMaterial);
 lowerLeg2.scale.set(0.1, 0.7, 0.1);
 lowerLeg2.position.set(-0.5, 0.5, 0);
 lowerLeg2.receiveShadow = true;
 scene.add(lowerLeg2);
+charArray.push(lowerLeg2);
 
 const foot2 = new THREE.Mesh(capsuleGeometry, charMaterial2);
 foot2.scale.set(0.15, 0.15, 0.15);
@@ -250,6 +269,8 @@ foot2.rotation.x = Math.PI / 2;
 foot2.position.set(-0.5, 0.075, 0.1);
 foot2.receiveShadow = true;
 scene.add(foot2);
+charArray.push(foot2);
+}
 
 // ---------------------------------------------------
 // Animation
@@ -261,15 +282,177 @@ function animate() {
 
     controls.update();
 
+    let position = [-2, 2, -2];
+    let animation = 0;
+    updateChar(position, animation);
+
     renderer.render(scene, camera);
 }
 
 animate();
 
+
+function updateChar(position, animation) {
+    let x = position[0];
+    let y = position[1];
+    let z = position[2];
+
+    let length = charArray.length;
+    for (let i = 0; i < length; i++){
+        scene.remove(charArray.pop());
+    }
+
+    {
+        //body
+        const char = 
+            new THREE.Mesh(
+                capsuleGeometry,
+                charMaterial
+            );
+        char.scale.set(0.6, 0.7, 0.6);
+        char.receiveShadow = true;
+        char.position.set(x, y, z);
+        char.rotation.z=Math.PI / 2;
+
+        scene.add(char);
+        charArray.push(char);
+
+        //eyes 
+        const eyeMaterial = new THREE.MeshStandardMaterial( { color: 0xffffff, roughness:0 } );
+        const eye1 = new THREE.Mesh( sphereGeometry, eyeMaterial );
+        eye1.scale.set(0.25, 0.25, 0.25);
+        eye1.position.set(x-0.5, y, z+0.5);
+        eye1.receiveShadow = true;
+        scene.add(eye1);
+        charArray.push(eye1);
+
+        const eye2 = new THREE.Mesh( sphereGeometry, eyeMaterial );
+        eye2.scale.set(0.25, 0.25, 0.25);
+        eye2.position.set(x+0.5, y, z+0.5);
+        eye2.receiveShadow = true;
+        scene.add(eye2);
+        charArray.push(eye2);
+
+        const pupilMaterial = new THREE.MeshStandardMaterial( { color: 0x000000, roughness:0 } );
+        const pupil1 = new THREE.Mesh( sphereGeometry, pupilMaterial );
+        pupil1.scale.set(0.125, 0.125, 0.125);
+        pupil1.position.set(x-0.5, y, z+0.675);
+        pupil1.receiveShadow = true;
+        scene.add( pupil1 );
+        charArray.push(pupil1);
+
+        const pupil2 = new THREE.Mesh( sphereGeometry, pupilMaterial );
+        pupil2.scale.set(0.125, 0.125, 0.125);
+        pupil2.position.set(x+0.5, y, z+0.675);
+        pupil2.receiveShadow = true;
+        scene.add( pupil2 );
+        charArray.push(pupil2);
+
+        //mouth
+        const mouth = new THREE.Mesh(capsuleGeometry, pupilMaterial);
+        mouth.scale.set(0.125, 0.15, 0.125);
+        mouth.rotation.z = Math.PI / 2;
+        mouth.position.set(x, y-.25, z+0.5);
+        mouth.receiveShadow = true;
+        scene.add(mouth);
+        charArray.push(mouth);
+
+        //antenna 
+        const antenna1 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        antenna1.scale.set(0.05, 0.5, 0.05);
+        antenna1.position.set(x+0.3, y+.7, z);
+        antenna1.receiveShadow = true;
+        scene.add(antenna1);
+        charArray.push(antenna1);
+
+        const antennaPip1 = new THREE.Mesh(sphereGeometry, charMaterial2);
+        antennaPip1.scale.set(0.075, 0.075, 0.075);
+        antennaPip1.position.set(x+0.3, y+.95, z);
+        antennaPip1.receiveShadow = true;
+        scene.add(antennaPip1);
+        charArray.push(antennaPip1);
+
+        const antenna2 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        antenna2.scale.set(0.05, 0.5, 0.05);
+        antenna2.position.set(x-0.3, y+.7, z);
+        antenna2.receiveShadow = true;
+        scene.add(antenna2);
+        charArray.push(antenna2);
+
+        const antennaPip2 = new THREE.Mesh(sphereGeometry, charMaterial2);
+        antennaPip2.scale.set(0.075, 0.075, 0.075);
+        antennaPip2.position.set(x-0.3, y+.95, z);
+        antennaPip2.receiveShadow = true;
+        scene.add(antennaPip2);
+        charArray.push(antennaPip2);
+
+        //legs
+        const upperLeg1 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        upperLeg1.scale.set(0.1, 0.7, 0.1);
+        upperLeg1.position.set(x+0.5, y-0.75, z);
+        upperLeg1.receiveShadow = true;
+        scene.add(upperLeg1);
+        charArray.push(upperLeg1);
+
+        const knee1 = new THREE.Mesh(sphereGeometry, charMaterial2);
+        knee1.scale.set(0.15, 0.15, 0.15);
+        knee1.position.set(x+0.5, y-1.15, z);
+        knee1.receiveShadow = true;
+        scene.add(knee1);
+        charArray.push(knee1);
+
+        const lowerLeg1 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        lowerLeg1.scale.set(0.1, 0.7, 0.1);
+        lowerLeg1.position.set(x+0.5, y-1.5, z);
+        lowerLeg1.receiveShadow = true;
+        scene.add(lowerLeg1);
+        charArray.push(lowerLeg1);
+
+        const foot1 = new THREE.Mesh(capsuleGeometry, charMaterial2);
+        foot1.scale.set(0.15, 0.15, 0.15);
+        foot1.rotation.x = Math.PI / 2;
+        foot1.position.set(x+0.5, y-1.925, z+0.1);
+        foot1.receiveShadow = true;
+        scene.add(foot1);
+        charArray.push(foot1);
+
+
+        const upperLeg2 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        upperLeg2.scale.set(0.1, 0.7, 0.1);
+        upperLeg2.position.set(x-0.5, y-0.75, z);
+        upperLeg2.receiveShadow = true;
+        scene.add(upperLeg2);
+        charArray.push(upperLeg2);
+
+        const knee2 = new THREE.Mesh(sphereGeometry, charMaterial2);
+        knee2.scale.set(0.15, 0.15, 0.15);
+        knee2.position.set(x-0.5, y-1.15, z);
+        knee2.receiveShadow = true;
+        scene.add(knee2);
+        charArray.push(knee2);
+
+        const lowerLeg2 = new THREE.Mesh(cylinderGeometry, charMaterial);
+        lowerLeg2.scale.set(0.1, 0.7, 0.1);
+        lowerLeg2.position.set(x-0.5, y-1.5, z);
+        lowerLeg2.receiveShadow = true;
+        scene.add(lowerLeg2);
+        charArray.push(lowerLeg2);
+
+        const foot2 = new THREE.Mesh(capsuleGeometry, charMaterial2);
+        foot2.scale.set(0.15, 0.15, 0.15);
+        foot2.rotation.x = Math.PI / 2;
+        foot2.position.set(x-0.5, y-1.925, z+0.1);
+        foot2.receiveShadow = true;
+        scene.add(foot2);
+        charArray.push(foot2);
+        }
+
+}
+
 // ---------------------------------------------------
 // Resize
 // ---------------------------------------------------
-
+{
 window.addEventListener('resize', () => {
 
     camera.aspect =
@@ -284,3 +467,4 @@ window.addEventListener('resize', () => {
     );
 
 });
+}
