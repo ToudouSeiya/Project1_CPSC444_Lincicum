@@ -81,8 +81,8 @@ scene.add(dirLight);
 // ---------------------------------------------------
 // Floor
 // ---------------------------------------------------
-const xBound = 40;
-const zBound = 40;
+const xBound = 20;
+const zBound = 20;
 {
 const floorGeometry =
     new THREE.PlaneGeometry(40, 40);
