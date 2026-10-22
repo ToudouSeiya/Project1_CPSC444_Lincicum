@@ -1,6 +1,8 @@
 //Morgan Lincicum
 //Project 1
 
+document.onmousemove = getMousePosition;
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -274,7 +276,7 @@ scene.add(foot2);
 charArray.push(foot2);
 
 
-var direction = 0;
+var direction = 2;
 
 //----------------------------------------------------------------------------
 // Keyboard Event Functions
@@ -366,6 +368,8 @@ function handleKeys()
 // ---------------------------------------------------
 let position = [0, 2, 0];
 let animation = 0;
+let mouseX = 0;
+let mouseY = 0;
 
 function animate() {
 
@@ -407,15 +411,34 @@ function updateChar(position, animation) {
 }
 
 function positionCharacter(x, y, z){
-    char.position.set(x, y, z);
+        char.position.set(x, y, z);
 
         eye1.position.set(x-0.5, y, z+0.5);
         
         eye2.position.set(x+0.5, y, z+0.5);
         
-        pupil1.position.set(x-0.5, y, z+0.675);
+        //update eye position to follow the mouse
+        let dX = (mouseX - (window.innerWidth / 2)) / window.innerWidth;
+        let dY = ((window.innerHeight / 2) - mouseY) / window.innerHeight;
+        let eye1X, eye2X, eyeY;
+        if (dX < 0){
+            eye1X = Math.min(x - 0.5 - dX, x-0.615);
+            eye2X = Math.min(x + 0.5 - dX, x+0.475);
+        }
+        else{
+            eye1X = Math.min(x - 0.5 + dX, x-0.475);
+            eye2X = Math.min(x + 0.5 + dX, x+0.615)
+        }
+        if (dY < 0){
+            eyeY = Math.min(y - dY, y-0.125);
+        }
+        else{
+            eyeY = Math.min(y + dY, y+0.125);
+        }
+
+        pupil1.position.set(eye1X, eyeY, z+0.675);
         
-        pupil2.position.set(x+0.5, y, z+0.675);
+        pupil2.position.set(eye2X, eyeY, z+0.675);
         
         mouth.position.set(x, y-.25, z+0.5);
         
@@ -442,6 +465,11 @@ function positionCharacter(x, y, z){
         lowerLeg2.position.set(x-0.5, y-1.5, z);
         
         foot2.position.set(x-0.5, y-1.925, z+0.1);
+}
+
+function getMousePosition(event){
+    mouseX = event.clientX;
+    mouseY = event.clientY;
 }
 
 
