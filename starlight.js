@@ -422,15 +422,15 @@ function positionCharacter(x, y, z){
         let dY = ((window.innerHeight / 2) - mouseY) / window.innerHeight;
         let eye1X, eye2X, eyeY;
         if (dX < 0){
-            eye1X = Math.min(x - 0.5 - dX, x-0.615);
-            eye2X = Math.min(x + 0.5 - dX, x+0.475);
+            eye1X = Math.max(x - 0.5 + dX, x-0.615);
+            eye2X = Math.max(x + 0.5 + dX, x+0.475);
         }
         else{
             eye1X = Math.min(x - 0.5 + dX, x-0.475);
             eye2X = Math.min(x + 0.5 + dX, x+0.615)
         }
         if (dY < 0){
-            eyeY = Math.min(y - dY, y-0.125);
+            eyeY = Math.max(y + dY, y-0.125);
         }
         else{
             eyeY = Math.min(y + dY, y+0.125);
