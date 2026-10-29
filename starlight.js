@@ -275,8 +275,18 @@ foot2.receiveShadow = true;
 scene.add(foot2);
 charArray.push(foot2);
 
+//fix upperLeg rotation (credit to ai chatbot)
+upperLeg1.rotation.order = 'YXZ';
+upperLeg2.rotation.order = 'YXZ';
+
 
 var direction = 2;
+
+//make them cast shadow too
+
+charArray.forEach(part => {
+        part.castShadow = true;
+    });
 
 //----------------------------------------------------------------------------
 // Keyboard Event Functions
@@ -331,34 +341,50 @@ function handleKeys()
 
    if (!shift && isPressed("W")) 
    {
-      if(position[2] < zBound && position[2] > (-1 * zBound)){
-        position[2]-=0.1;
+      if(position[2] <= zBound && position[2] >= (-1 * zBound)){
+        position[2]-=0.2;
+        if (position[2] < -zBound){
+            position[2] = -zBound;
+        }
       }
       direction = 0;
+      walking = true;
    }
 
    if (!shift && isPressed("A")) 
    {
-       if(position[0] < xBound && position[0] > (-1 * xBound)){
-        position[0]-=0.1;
+       if(position[0] <= xBound && position[0] > (-1 * xBound)){
+        position[0]-=0.2;
+        if (position[0] < -xBound){
+            position[0] = -xBound;
+        }
       }
       direction = 1;
+      walking = true;
    }
 
    if (!shift && isPressed("S")) 
    {
-       if(position[2] < zBound && position[2] > (-1 * zBound)){
-        position[2]+=0.1;
+       if(position[2] < zBound && position[2] >= (-1 * zBound)){
+        position[2]+=0.2;
+        if (position[2] > zBound){
+            position[2] = zBound;
+        }
       }
       direction = 2;
+      walking = true;
    }
 
    if (!shift && isPressed("D")) 
    {
-        if(position[0] < xBound && position[0] > (-1 * xBound)){
-        position[0]+=0.1;
+        if(position[0] < xBound && position[0] >= (-1 * xBound)){
+        position[0]+=0.2;
+        if (position[0] > xBound){
+            position[0] = xBound;
+        }
       }
       direction = 3;
+      walking = true;
    }
 }
 
@@ -370,6 +396,7 @@ let position = [0, 2, 0];
 let animation = 0;
 let mouseX = 0;
 let mouseY = 0;
+let walking = false;
 
 function animate() {
 
@@ -379,6 +406,20 @@ function animate() {
 
     handleKeys();
 
+    //if in the middle of walking, finish step
+    if(animation > 0){
+        animation += 0.2;
+    }
+    //if not in walking animation but button has been pressed, start walking animation
+    if (animation == 0 && walking){
+        animation += 0.2;
+    }
+    //if step done, loop around to 0
+    if (animation >= 5){
+        animation = 0;
+        walking = false;
+    }
+
     updateChar(position, animation);
 
     renderer.render(scene, camera);
@@ -387,7 +428,7 @@ function animate() {
 animate();
 
 
-function updateChar(position, animation) {
+function updateChar(position) {
     let x = position[0];
     let y = position[1];
     let z = position[2];
@@ -407,15 +448,34 @@ function updateChar(position, animation) {
         part.position.z = z - dx * sin + dz * cos;
         part.rotation.y = angle;
     });
+    //the feet have trouble rotating so rotate them separately
+    if (direction == 1 || direction == 3) {
+        foot1.rotation.set(Math.PI / 2, 0, Math.PI/2);
+        foot2.rotation.set(Math.PI / 2, 0, Math.PI/2);
+    }
+    else{
+        foot1.rotation.set(Math.PI / 2, 0, 0);
+        foot2.rotation.set(Math.PI /2, 0, 0);
+    }
 
 }
 
 function positionCharacter(x, y, z){
-        char.position.set(x, y, z);
 
-        eye1.position.set(x-0.5, y, z+0.5);
+    //animate body bobbing while walking
+
+        let yOffset = Math.sin(animation) * 0.125;
+        let zOffset = 0;
+        if (animation > 0) {
+            //zOffset + 0.125;
+            yOffset + 0.125;
+        }
+
+        char.position.set(x, y + yOffset, z + zOffset);
+
+        eye1.position.set(x-0.5, y + yOffset, z+0.5 + zOffset);
         
-        eye2.position.set(x+0.5, y, z+0.5);
+        eye2.position.set(x+0.5, y + yOffset, z+0.5 + zOffset);
         
         //update eye position to follow the mouse
         let dX = (mouseX - (window.innerWidth / 2)) / window.innerWidth;
@@ -436,35 +496,69 @@ function positionCharacter(x, y, z){
             eyeY = Math.min(y + dY, y+0.125);
         }
 
-        pupil1.position.set(eye1X, eyeY, z+0.675);
+        pupil1.position.set(eye1X, eyeY+ yOffset, z+0.675 + zOffset);
         
-        pupil2.position.set(eye2X, eyeY, z+0.675);
+        pupil2.position.set(eye2X, eyeY+ yOffset, z+0.675 + zOffset);
         
-        mouth.position.set(x, y-.25, z+0.5);
+        mouth.position.set(x, y-.25+ yOffset, z+0.5 + zOffset);
+    
+        antenna1.position.set(x+0.3, y+.7+ yOffset, z + zOffset);
         
-        antenna1.position.set(x+0.3, y+.7, z);
+        antennaPip1.position.set(x+0.3, y+.95+ yOffset, z + zOffset);
         
-        antennaPip1.position.set(x+0.3, y+.95, z);
+        antenna2.position.set(x-0.3, y+.7+ yOffset, z + zOffset);
         
-        antenna2.position.set(x-0.3, y+.7, z);
+        antennaPip2.position.set(x-0.3, y+.95+ yOffset, z + zOffset);
         
-        antennaPip2.position.set(x-0.3, y+.95, z);
+        //animate legs based on walking animation frame
+        let rotation = 0;
+        let rotatedZ = 0;
+        let rotatedY = 0;
+        let l = upperLeg1.scale.y;
+
+        if(animation > 0 && animation < 3){
+            rotation = Math.sin(animation) * (Math.PI / 2) ;
+            rotatedZ = rotation*(l/2);
+            rotatedY = (-l/2) + rotation*(l/2);
+        }
+
+        upperLeg1.rotation.x = -rotation;
+        upperLeg1.position.set(x+0.5, y-0.75 + rotatedY+ yOffset, z + rotatedZ);
+
+        if(animation > 0 && animation < 3){
+            rotatedZ += rotation*(l/2) - (knee1.scale.x/2);
+            rotatedY += rotation*(l/2) - (knee1.scale.x/2);
+        }
+
+        knee1.position.set(x+0.5, y-1.15 + rotatedY+ yOffset, z + rotatedZ);
+
+        lowerLeg1.position.set(x+0.5, y-1.5 + rotatedY+ yOffset, z + rotatedZ);
+
+        foot1.position.set(x+0.5, y-1.925 + rotatedY+ yOffset, z+0.1+rotatedZ);
         
-        upperLeg1.position.set(x+0.5, y-0.75, z);
-        
-        knee1.position.set(x+0.5, y-1.15, z);
-        
-        lowerLeg1.position.set(x+0.5, y-1.5, z);
-        
-        foot1.position.set(x+0.5, y-1.925, z+0.1);
-        
-        upperLeg2.position.set(x-0.5, y-0.75, z);
-        
-        knee2.position.set(x-0.5, y-1.15, z);
-        
-        lowerLeg2.position.set(x-0.5, y-1.5, z);
-        
-        foot2.position.set(x-0.5, y-1.925, z+0.1);
+        //second leg
+        rotation = 0;
+        rotatedZ = 0;
+        rotatedY = 0;
+
+        if(animation > 2){
+            rotation = Math.sin(animation - 2) * (Math.PI / 2) ;
+            rotatedZ = rotation*(l/2);
+            rotatedY = (-l/2) + rotation*(l/2);
+        }
+        upperLeg2.rotation.x = -rotation;
+        upperLeg2.position.set(x-0.5, y-0.75 + rotatedY+ yOffset, z + rotatedZ);
+
+        if(animation > 2){
+            rotatedZ += rotation*(l/2) - (knee2.scale.x/2);
+            rotatedY += rotation*(l/2) - (knee2.scale.x/2);
+        }
+
+        knee2.position.set(x-0.5, y-1.15 + rotatedY+ yOffset, z + rotatedZ);
+
+        lowerLeg2.position.set(x-0.5, y-1.5 + rotatedY+ yOffset, z + rotatedZ);
+
+        foot2.position.set(x-0.5, y-1.925 + rotatedY+ yOffset, z+0.1+rotatedZ);
 }
 
 function getMousePosition(event){
