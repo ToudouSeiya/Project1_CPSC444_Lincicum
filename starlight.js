@@ -47,7 +47,6 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // ---------------------------------------------------
 // Lights
 // ---------------------------------------------------
-{
 const ambientLight = new THREE.AmbientLight(
     0xffffff,
     0.4
@@ -74,12 +73,23 @@ const helper = new THREE.PointLightHelper(
 scene.add(helper);
 
 const dirLight = new THREE.DirectionalLight(
-    0xffffff, 0.7
-)
+    0xFFDD00, 0.7, Math.PI/6
+);
 dirLight.position.set(-50, 50, 50);
 scene.add(dirLight);
 
-}
+//spotlight
+const spotLight = new THREE.SpotLight(
+    0xffffff, 500
+);
+spotLight.position.set(12, 10, 0);
+spotLight.castShadow = true;
+scene.add(spotLight);
+
+const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+scene.add( spotLightHelper );
+
+
 // ---------------------------------------------------
 // Floor
 // ---------------------------------------------------
@@ -91,7 +101,7 @@ const floorGeometry =
 
 const floorMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x444444
+        color: 0x453824
     });
 
 const floor =
@@ -111,6 +121,8 @@ scene.add(floor);
 const sphereGeometry = new THREE.SphereGeometry(1, 10, 10);
 const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16);
 const capsuleGeometry = new THREE.CapsuleGeometry(1, 1, 4, 8, 1);
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const starGeometry = new THREE.TorusKnotGeometry(1, 1, 8, 7, 17, 20);
 
 // ---------------------------------------------------
 // Character
@@ -287,6 +299,67 @@ var direction = 2;
 charArray.forEach(part => {
         part.castShadow = true;
     });
+
+
+//----------------------------------------------------------------------------
+// Scene
+//----------------------------------------------------------------------------
+
+let sceneObjects = [];
+
+const podMaterial = new THREE.MeshPhongMaterial({
+    color: 0xE3B9B1,
+    shininess: 100
+})
+
+//Podium
+const podBase = new THREE.Mesh(boxGeometry, podMaterial);
+podBase.scale.set(1, 0.25, 1);
+podBase.position.set(10, 0.125, 0);
+podBase.receiveShadow = true;
+podBase.castShadow = true;
+scene.add(podBase);
+sceneObjects.push(podBase);
+
+const podColumn = new THREE.Mesh(cylinderGeometry, podMaterial);
+podColumn.scale.set(0.5, 2, 0.5);
+podColumn.position.set(10, 1.125, 0);
+podColumn.receiveShadow = true;
+podColumn.castShadow = true;
+scene.add(podColumn);
+sceneObjects.push(podColumn);
+
+const podTop = new THREE.Mesh(boxGeometry, podMaterial);
+podTop.scale.set(1.125, 0.25, 1.125);
+podTop.position.set(10, 2.25, 0);
+podTop.receiveShadow = true;
+podTop.castShadow = true;
+scene.add(podTop);
+sceneObjects.push(podTop);
+
+//star
+const starMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xFAFF57,
+    transmission: 0.75,
+    iridescence: 0.5,
+    clearcoat: 0.5,
+    emissive: 0xFAFF57,
+    emissiveIntensity: 0.125
+});
+
+const star = new THREE.Mesh(
+    starGeometry,
+    starMaterial
+);
+star.scale.set(0.25, 0.5, 0.25);
+star.position.set(10, 3.5, 0);
+star.rotation.set(-0.5, -0.5, -0.5);
+star.receiveShadow = true;
+star.castShadow = true;
+scene.add(star);
+sceneObjects.push(star);
+
+spotLight.target = star;
 
 //----------------------------------------------------------------------------
 // Keyboard Event Functions
