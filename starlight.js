@@ -63,7 +63,7 @@ pointLight.position.set(1, 10, 1);
 
 pointLight.castShadow = true;
 
-scene.add(pointLight);
+//scene.add(pointLight);
 
 const helper = new THREE.PointLightHelper(
     pointLight,
@@ -73,21 +73,32 @@ const helper = new THREE.PointLightHelper(
 scene.add(helper);
 
 const dirLight = new THREE.DirectionalLight(
-    0xFFDD00, 0.7, Math.PI/6
+    0xFFDD00, 0.5, Math.PI/6
 );
 dirLight.position.set(-50, 50, 50);
 scene.add(dirLight);
 
 //spotlight
 const spotLight = new THREE.SpotLight(
-    0xffffff, 500
+    0xffffff, 200
 );
 spotLight.position.set(12, 10, 0);
 spotLight.castShadow = true;
 scene.add(spotLight);
 
-const spotLightHelper = new THREE.SpotLightHelper( spotLight );
-scene.add( spotLightHelper );
+// const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+// scene.add( spotLightHelper );
+
+//star light
+const starLight = new THREE.PointLight(
+    0xFFAC5C, 1000, 1
+);
+starLight.position.set(10,3.5,0);
+starLight.castShadow=true;
+scene.add(starLight);
+
+// const starLightHelper = new THREE.PointLightHelper( starLight, 1 );
+// scene.add( starLightHelper );
 
 
 // ---------------------------------------------------
@@ -343,8 +354,8 @@ const starMaterial = new THREE.MeshPhysicalMaterial({
     transmission: 0.75,
     iridescence: 0.5,
     clearcoat: 0.5,
-    emissive: 0xFAFF57,
-    emissiveIntensity: 0.125
+    emissive: 0xFFAC5C,
+    emissiveIntensity: 0
 });
 
 const star = new THREE.Mesh(
@@ -470,6 +481,7 @@ let animation = 0;
 let mouseX = 0;
 let mouseY = 0;
 let walking = false;
+let lightGrow = true;
 
 function animate() {
 
@@ -494,6 +506,23 @@ function animate() {
     }
 
     updateChar(position, animation);
+
+    //animate light
+
+    if(lightGrow){
+        starLight.distance += 0.035;
+        star.material.emissiveIntensity += 0.0045;
+    }
+    else{
+        starLight.distance -= 0.035;
+        star.material.emissiveIntensity -= 0.0045;
+    }
+    if(starLight.distance >= 5){
+        lightGrow = false;
+    }
+    if(starLight.distance <= 1.15){
+        lightGrow=true;
+    }
 
     renderer.render(scene, camera);
 }
