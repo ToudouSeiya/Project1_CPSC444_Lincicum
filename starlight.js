@@ -48,32 +48,14 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // Lights
 // ---------------------------------------------------
 const ambientLight = new THREE.AmbientLight(
-    0xffffff,
-    0.4
+    0xff9900,
+    0.6
 );
 
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(
-    0xffffff,
-    200
-);
-
-pointLight.position.set(1, 10, 1);
-
-pointLight.castShadow = true;
-
-//scene.add(pointLight);
-
-const helper = new THREE.PointLightHelper(
-    pointLight,
-    0.5
-);
-
-scene.add(helper);
-
 const dirLight = new THREE.DirectionalLight(
-    0xFFDD00, 0.5, Math.PI/6
+    0xFFDD00, 0.7, Math.PI/6
 );
 dirLight.position.set(-50, 50, 50);
 scene.add(dirLight);
@@ -94,7 +76,7 @@ const starLight = new THREE.PointLight(
     0xFFAC5C, 1000, 1
 );
 starLight.position.set(10,3.5,0);
-starLight.castShadow=true;
+//starLight.castShadow=true;
 scene.add(starLight);
 
 // const starLightHelper = new THREE.PointLightHelper( starLight, 1 );
@@ -112,7 +94,7 @@ const floorGeometry =
 
 const floorMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0x453824
+        color: 0x3E593C
     });
 
 const floor =
@@ -134,6 +116,7 @@ const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16);
 const capsuleGeometry = new THREE.CapsuleGeometry(1, 1, 4, 8, 1);
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 const starGeometry = new THREE.TorusKnotGeometry(1, 1, 8, 7, 17, 20);
+const flowerGeometry = new THREE.TorusKnotGeometry(0.5, 0.1, 70, 7, 19, 20);
 
 // ---------------------------------------------------
 // Character
@@ -372,6 +355,54 @@ sceneObjects.push(star);
 
 spotLight.target = star;
 
+//background
+
+const flowerMaterial = new THREE.MeshStandardMaterial({
+    color: 0x990E3D,
+    roughness: 1,
+    metalness: 0
+});
+
+function flower(){ //with help from AI chatbot
+    const flower = new THREE.Mesh(
+        flowerGeometry,
+        flowerMaterial
+    );
+
+    const flowerCore = new THREE.Mesh(
+        sphereGeometry,
+        new THREE.MeshStandardMaterial({
+            color: 0xFFDD00,
+            roughness: 1,
+            metalness: 0
+        })
+    );
+
+    flowerCore.scale.set(0.25, 0.25, 0.25);
+    flowerCore.position.set(0, 0, 0);
+    flower.add(flowerCore);
+
+    let scale = Math.random() * 0.75 + 0.25;
+    flower.scale.set(scale, scale, scale - 0.25);
+    flower.position.set(Math.random() * 40 - 20, scale / 4, Math.random() * 40 - 20);
+    flower.rotation.set(Math.PI / 2, 0, 0);
+    flower.receiveShadow = true;
+    flower.castShadow = true;
+    scene.add(flower);
+    sceneObjects.push(flower);
+
+    //make the cores glow
+    const coreLight = new THREE.PointLight(
+        0xFFDD00, 1, 1
+    );
+    coreLight.position.set(0, 0, 0);
+    flower.add(coreLight);
+};
+
+for(let i = 0; i < 30; i++){
+    flower();
+}
+
 //----------------------------------------------------------------------------
 // Keyboard Event Functions
 //----------------------------------------------------------------------------
@@ -418,7 +449,7 @@ function isPressed(c)
 //handleKeys()
 //Continuously called from animate to cause model updates based on
 //any keys currently being held down
-function handleKeys() 
+function handleKeys(delta) 
 {
    //Place continuous key actions here - anything that should continue while a key is
    //held
@@ -426,7 +457,7 @@ function handleKeys()
    if (!shift && isPressed("W")) 
    {
       if(position[2] <= zBound && position[2] >= (-1 * zBound)){
-        position[2]-=0.2;
+        position[2]-=12 * delta;
         if (position[2] < -zBound){
             position[2] = -zBound;
         }
@@ -438,7 +469,7 @@ function handleKeys()
    if (!shift && isPressed("A")) 
    {
        if(position[0] <= xBound && position[0] > (-1 * xBound)){
-        position[0]-=0.2;
+        position[0]-=12 * delta;
         if (position[0] < -xBound){
             position[0] = -xBound;
         }
@@ -450,7 +481,7 @@ function handleKeys()
    if (!shift && isPressed("S")) 
    {
        if(position[2] < zBound && position[2] >= (-1 * zBound)){
-        position[2]+=0.2;
+        position[2]+=12 * delta;
         if (position[2] > zBound){
             position[2] = zBound;
         }
@@ -462,7 +493,7 @@ function handleKeys()
    if (!shift && isPressed("D")) 
    {
         if(position[0] < xBound && position[0] >= (-1 * xBound)){
-        position[0]+=0.2;
+        position[0]+=12 * delta;
         if (position[0] > xBound){
             position[0] = xBound;
         }
@@ -483,21 +514,26 @@ let mouseY = 0;
 let walking = false;
 let lightGrow = true;
 
-function animate() {
+
+let previousTime;
+function animate(now) {
 
     requestAnimationFrame(animate);
 
+    const delta = previousTime === undefined ? 0 : (now - previousTime) / 1000; 
+    previousTime = now;
+
     controls.update();
 
-    handleKeys();
+    handleKeys(delta);
 
-    //if in the middle of walking, finish step
+    //if in the middle of walking, go until finish step
     if(animation > 0){
-        animation += 0.2;
+        animation += 12 * delta;
     }
     //if not in walking animation but button has been pressed, start walking animation
     if (animation == 0 && walking){
-        animation += 0.2;
+        animation += 12 * delta;
     }
     //if step done, loop around to 0
     if (animation >= 5){
@@ -510,12 +546,12 @@ function animate() {
     //animate light
 
     if(lightGrow){
-        starLight.distance += 0.035;
-        star.material.emissiveIntensity += 0.0045;
+        starLight.distance += delta;
+        star.material.emissiveIntensity += 0.5 * delta;
     }
     else{
-        starLight.distance -= 0.035;
-        star.material.emissiveIntensity -= 0.0045;
+        starLight.distance -= delta;
+        star.material.emissiveIntensity -= 0.5 * delta;
     }
     if(starLight.distance >= 5){
         lightGrow = false;
