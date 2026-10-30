@@ -341,19 +341,19 @@ const starMaterial = new THREE.MeshPhysicalMaterial({
     emissiveIntensity: 0
 });
 
-const star = new THREE.Mesh(
+const podStar = new THREE.Mesh(
     starGeometry,
     starMaterial
 );
-star.scale.set(0.25, 0.5, 0.25);
-star.position.set(10, 3.5, 0);
-star.rotation.set(-0.5, -0.5, -0.5);
-star.receiveShadow = true;
-star.castShadow = true;
-scene.add(star);
-sceneObjects.push(star);
+podStar.scale.set(0.25, 0.5, 0.25);
+podStar.position.set(10, 3.5, 0);
+podStar.rotation.set(-0.5, -0.5, -0.5);
+podStar.receiveShadow = true;
+podStar.castShadow = true;
+scene.add(podStar);
+sceneObjects.push(podStar);
 
-spotLight.target = star;
+spotLight.target = podStar;
 
 //background
 
@@ -393,14 +393,35 @@ function flower(){ //with help from AI chatbot
 
     //make the cores glow
     const coreLight = new THREE.PointLight(
-        0xFFDD00, 1, 1
+        0xFFDD00, 1, scale+0.5
     );
     coreLight.position.set(0, 0, 0);
     flower.add(coreLight);
 };
 
-for(let i = 0; i < 30; i++){
+for(let i = 0; i < 50; i++){
     flower();
+}
+
+
+function star(){
+    const star = new THREE.Mesh(
+        starGeometry,
+        podMaterial
+    );
+
+    let scale = Math.random() * 4 + 0.25;
+    star.scale.set(scale, scale * 2, scale - 0.25);
+    star.position.set(Math.random() * 40 - 20, scale / 2, Math.random() * 40 - 20);
+    star.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    star.receiveShadow = true;
+    star.castShadow = true;
+    scene.add(star);
+    sceneObjects.push(star);
+}
+
+for(let i = 0; i < 7; i++){
+    star();
 }
 
 //----------------------------------------------------------------------------
@@ -547,11 +568,11 @@ function animate(now) {
 
     if(lightGrow){
         starLight.distance += delta;
-        star.material.emissiveIntensity += 0.5 * delta;
+        podStar.material.emissiveIntensity += 0.5 * delta;
     }
     else{
         starLight.distance -= delta;
-        star.material.emissiveIntensity -= 0.5 * delta;
+        podStar.material.emissiveIntensity -= 0.5 * delta;
     }
     if(starLight.distance >= 5){
         lightGrow = false;
