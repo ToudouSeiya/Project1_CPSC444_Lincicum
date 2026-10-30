@@ -49,13 +49,13 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // ---------------------------------------------------
 const ambientLight = new THREE.AmbientLight(
     0xff9900,
-    0.6
+    0.7
 );
 
 scene.add(ambientLight);
 
 const dirLight = new THREE.DirectionalLight(
-    0xFFDD00, 0.7, Math.PI/6
+    0xFFDD00, 1, Math.PI/6
 );
 dirLight.position.set(-50, 50, 50);
 scene.add(dirLight);
@@ -386,14 +386,11 @@ function flower(){ //with help from AI chatbot
     flower.scale.set(scale, scale, scale - 0.25);
     flower.position.set(Math.random() * 40 - 20, scale / 4, Math.random() * 40 - 20);
     flower.rotation.set(Math.PI / 2, 0, 0);
-    flower.receiveShadow = true;
-    flower.castShadow = true;
     scene.add(flower);
-    sceneObjects.push(flower);
 
     //make the cores glow
     const coreLight = new THREE.PointLight(
-        0xFFDD00, 1, scale+0.5
+        0xFFDD00, 1, scale+2
     );
     coreLight.position.set(0, 0, 0);
     flower.add(coreLight);
@@ -405,23 +402,72 @@ for(let i = 0; i < 50; i++){
 
 
 function star(){
-    const star = new THREE.Mesh(
-        starGeometry,
-        podMaterial
-    );
+    let notPlaced = true;
+    while (notPlaced){
+        const star = new THREE.Mesh(
+            starGeometry,
+            podMaterial
+        );
 
-    let scale = Math.random() * 4 + 0.25;
-    star.scale.set(scale, scale * 2, scale - 0.25);
-    star.position.set(Math.random() * 40 - 20, scale / 2, Math.random() * 40 - 20);
-    star.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-    star.receiveShadow = true;
-    star.castShadow = true;
-    scene.add(star);
-    sceneObjects.push(star);
+        let scale = Math.random() * 4 + 0.25;
+        star.scale.set(scale, scale * 2, scale - 0.25);
+        star.position.set(Math.random() * 40 - 20, scale / 2, Math.random() * 40 - 20);
+        star.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+        if(! isColliding(star, podColumn) && ! isColliding(star, char)){
+            star.receiveShadow = true;
+            star.castShadow = true;
+            scene.add(star);
+            sceneObjects.push(star);
+            notPlaced = false;
+        }
+    }
 }
 
-for(let i = 0; i < 7; i++){
+for(let i = 0; i < 10; i++){
     star();
+}
+
+//circle of flowers around podium
+function flower2(x, z){ 
+    const flower = new THREE.Mesh(
+        flowerGeometry,
+        flowerMaterial
+    );
+
+    const flowerCore = new THREE.Mesh(
+        sphereGeometry,
+        new THREE.MeshStandardMaterial({
+            color: 0xFFDD00,
+            roughness: 1,
+            metalness: 0
+        })
+    );
+
+    flowerCore.scale.set(0.25, 0.25, 0.25);
+    flowerCore.position.set(0, 0, 0);
+    flower.add(flowerCore);
+
+    let scale = 0.5;
+    flower.scale.set(scale, scale, scale - 0.25);
+    flower.position.set(x, scale / 4, z);
+    flower.rotation.set(Math.PI / 2, 0, 0);
+    scene.add(flower);
+
+    //make the cores glow
+    const coreLight = new THREE.PointLight(
+        0xFFDD00, 1, scale+2
+    );
+    coreLight.position.set(0, 0, 0);
+    flower.add(coreLight);
+};
+
+for(let i = 0; i < 10; i++){
+    let angle = Math.PI / 5 * i;
+    let distance = 1;
+    let x = distance * Math.cos(angle);
+    let z = distance * Math.sin(angle);
+    flower2(10 + x, z);
 }
 
 //----------------------------------------------------------------------------
@@ -483,6 +529,17 @@ function handleKeys(delta)
             position[2] = -zBound;
         }
       }
+      updateChar(position, animation);
+      //check for collision
+      let colliding = false;
+      sceneObjects.forEach( obj => {
+        if(isColliding(char, obj)) {
+            colliding = true;
+        }
+      })
+      if(colliding){
+        position[2] += 12 * delta;
+      }
       direction = 0;
       walking = true;
    }
@@ -494,6 +551,17 @@ function handleKeys(delta)
         if (position[0] < -xBound){
             position[0] = -xBound;
         }
+      }
+      updateChar(position, animation);
+      //check for collision
+      let colliding = false;
+      sceneObjects.forEach( obj => {
+        if(isColliding(char, obj)) {
+            colliding = true;
+        }
+      })
+      if(colliding){
+        position[0] += 12 * delta;
       }
       direction = 1;
       walking = true;
@@ -507,6 +575,17 @@ function handleKeys(delta)
             position[2] = zBound;
         }
       }
+      updateChar(position, animation);
+       //check for collision
+      let colliding = false;
+      sceneObjects.forEach( obj => {
+        if(isColliding(char, obj)) {
+            colliding = true;
+        }
+      })
+      if(colliding){
+        position[2] -= 12 * delta;
+      }
       direction = 2;
       walking = true;
    }
@@ -518,6 +597,17 @@ function handleKeys(delta)
         if (position[0] > xBound){
             position[0] = xBound;
         }
+      }
+      updateChar(position, animation);
+       //check for collision
+      let colliding = false;
+      sceneObjects.forEach( obj => {
+        if(isColliding(char, obj)) {
+            colliding = true;
+        }
+      })
+      if(colliding){
+        position[0] -= 12 * delta;
       }
       direction = 3;
       walking = true;
@@ -544,7 +634,7 @@ function animate(now) {
     const delta = previousTime === undefined ? 0 : (now - previousTime) / 1000; 
     previousTime = now;
 
-    controls.update();
+    controls.update(delta);
 
     handleKeys(delta);
 
@@ -723,6 +813,18 @@ function positionCharacter(x, y, z){
 function getMousePosition(event){
     mouseX = event.clientX;
     mouseY = event.clientY;
+}
+
+function isColliding(obj1, obj2){
+    let obj1Bounds = new THREE.Box3();
+    obj1Bounds.setFromObject(obj1);
+
+    let obj2Bounds = new THREE.Box3();
+    obj2Bounds.setFromObject(obj2);
+
+    let isColliding = obj1Bounds.intersectsBox(obj2Bounds);
+
+    return isColliding;
 }
 
 
